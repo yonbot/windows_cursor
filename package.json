@@ -1,0 +1,21 @@
+{
+  "name": "cursor-setup-tool",
+  "version": "1.0.0",
+  "description": "Cursor環境セットアップツール - CursorRules自動起動対応",
+  "main": "setup-web/server.js",
+  "scripts": {
+    "start": "node setup-web/server.js",
+    "dev": "nodemon setup-web/server.js",
+    "setup": "bash setup_magic.sh",
+    "magic": "bash setup_magic.sh"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": ["cursor", "setup", "development", "cursorrules", "automation"],
+  "author": "Cursor User",
+  "license": "MIT"
+}
