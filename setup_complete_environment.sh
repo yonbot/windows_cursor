@@ -66,25 +66,57 @@ fi
 
 # 4. Python環境のセットアップ（Jupyter用）
 echo "🐍 Python環境をセットアップ中..."
+
+# 環境検出とPythonコマンドの決定
+PYTHON_CMD=""
 if command -v python3 &> /dev/null; then
-    # 仮想環境の作成
-    if [ ! -d "env" ]; then
-        python3 -m venv env
-        echo "✅ Python仮想環境を作成しました"
+    PYTHON_CMD="python3"
+    echo "📍 python3 コマンドを使用します"
+elif command -v python &> /dev/null; then
+    PYTHON_CMD="python"
+    echo "📍 python コマンドを使用します"
+fi
+
+if [ -n "$PYTHON_CMD" ]; then
+    # 既存の仮想環境を削除（環境に応じて）
+    if [ -d "env" ]; then
+        echo "🗑️ 既存の仮想環境を削除中..."
+        if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" || "$OSTYPE" == "win32" ]] || command -v powershell &> /dev/null; then
+            # Windows環境
+            powershell -Command "Remove-Item -Recurse -Force env"
+        else
+            # Unix系環境 (Mac/Linux)
+            rm -rf env
+        fi
     fi
     
+    # 仮想環境の作成
+    echo "🔧 新しい仮想環境を作成中..."
+    $PYTHON_CMD -m venv env
+    echo "✅ Python仮想環境を作成しました"
+    
     # 仮想環境をアクティベートして必要なパッケージをインストール
-    source env/bin/activate
-    pip install --upgrade pip
-    pip install jupyter notebook ipykernel pandas numpy matplotlib seaborn
-    
-    # Jupyterカーネルを登録
-    python -m ipykernel install --user --name=cursor_project --display-name="Cursor Project"
-    
-    deactivate
+    # Windows環境での仮想環境アクティベートとパッケージインストール
+    if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" || "$OSTYPE" == "win32" ]] || command -v powershell &> /dev/null; then
+        # Windows環境: PowerShell経由で実行
+        powershell -Command "
+            env\Scripts\Activate.ps1
+            python -m pip install --upgrade pip
+            python -m pip install jupyter notebook ipykernel pandas numpy matplotlib seaborn
+            python -m ipykernel install --user --name=cursor_project --display-name='Cursor Project'
+        "
+    else
+        # Unix系環境: 通常のbash仮想環境
+        source env/bin/activate
+        $PYTHON_CMD -m pip install --upgrade pip
+        $PYTHON_CMD -m pip install jupyter notebook ipykernel pandas numpy matplotlib seaborn
+        # Jupyterカーネルを登録
+        $PYTHON_CMD -m ipykernel install --user --name=cursor_project --display-name="Cursor Project"
+        deactivate
+    fi
     echo "✅ Python環境のセットアップ完了"
 else
-    echo "⚠️  Python3が見つかりません"
+    echo "⚠️  Pythonが見つかりません"
 fi
 
 # 5. 環境変数テンプレートの設定
@@ -156,8 +188,8 @@ if [ -f "$MCP_CONFIG_FILE" ]; then
         "@modelcontextprotocol/server-slack"
         "@gongrzhe/server-gmail-autoauth-mcp"
         "@cocal/google-calendar-mcp"
-        "@mcpservers/playwright"
-        "@executeautomation/mcp-postgres"
+        "@playwright/mcp"
+        "@ahmetkca/mcp-server-postgres"
     )
     
     for server in "${npm_servers[@]}"; do
