@@ -7,9 +7,7 @@
     "source.fixAll": "explicit"
   },
   "markdown.marp.enableHtml": true,
-  "markdown.marp.themes": [
-    "https://cunhapaulo.github.io/style/freud.css"
-  ],
+  "markdown.marp.themes": ["https://cunhapaulo.github.io/style/freud.css"],
   "markdown.marp.preview.htmlEnabled": true,
   "markdown.marp.exportType": "html",
   "markdown.marp.chromePath": "",
@@ -31,5 +29,9 @@
     "default": "right",
     "jupyter-notebook": "left"
   },
-  "notebook.lineNumbers": "on"
+  "notebook.lineNumbers": "on",
+  "extensions.ignoreRecommendations": false,
+  "python.defaultInterpreterPath": "python",
+  "python.languageServer": "Default",
+  "cursor.general.enableExtensionRecommendations": true
 }
